@@ -527,7 +527,8 @@ fn command_from_user_input() -> args::Command {
 
     if legacy {
         eprintln!("\x1B[1;31mUsing legacy interface for PS/2 device\x1B[0;39m");
-        let cooldown = choose_usize("Choose cooldown, the min is 25", Some(25)) as u64;
+        let mut cooldown = choose_usize("Choose cooldown, the min is 1ms", Some(25)) as u64;
+        check_cooldown(&mut cooldown);
         let cooldown_press_release =
             choose_usize("Choose cooldown between press and release", Some(0)) as u64;
 
@@ -558,17 +559,8 @@ fn command_from_user_input() -> args::Command {
         );
         let grab = choose_yes("You want to grab the input device?", true);
         println!("Grab: {grab}");
-        let mut cooldown = choose_usize("Choose cooldown, the min is 25", Some(25)) as u64;
-        if cooldown < 25 {
-            cooldown = 25;
-            println!("\x1B[1;39mThe cooldown was set to \x1B[1;32m25\x1B[0;39m");
-            println!(
-                "\x1B[1;33mThe linux kernel does not permit more the 40 events from a device per second!\x1B[0;39m"
-            );
-            println!(
-                "\x1B[;32mIf your kernel permits that, you can bypass this dialog using the command args and modify the -c argument.\x1B[;39m"
-            );
-        }
+        let mut cooldown = choose_usize("Choose cooldown, the min is 1ms", Some(25)) as u64;
+        check_cooldown(&mut cooldown);
         let jitter = choose_usize("Choose jitter", Some(0)) as u64;
         let cooldown_press_release =
             choose_usize("Choose cooldown between press and release", Some(0)) as u64;
@@ -587,6 +579,21 @@ fn command_from_user_input() -> args::Command {
             cooldown_press_release,
             device_query: input_device.path.to_str().unwrap().to_owned(),
         }
+    }
+}
+
+fn check_cooldown(cooldown: &mut u64) {
+    if *cooldown < 1 {
+        *cooldown = 1;
+        println!("\x1B[1;33mThe cooldown was set to \x1B[1;32m1ms\x1B[0;39m");
+        println!(
+            "\x1B[;32mYou can bypass this dialog by modifying the -c argument from the provided command args.\x1B[;39m"
+        );
+    }
+    if *cooldown < 25 {
+        println!(
+            "\x1B[1;33mThere are known cases in which the autoclicker might not work when the cooldown is less than \x1B[1;32m25ms!\x1B[0;39m"
+        );
     }
 }
 
