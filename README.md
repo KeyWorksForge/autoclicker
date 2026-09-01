@@ -37,8 +37,6 @@ The binary path will be: `./target/release/theclicker`
 # Problems?
 
 ## Crashes
-If you don't have an input group create it with `newgrp input`
-
 Add your user to the input group, (may not work on all systems): `sudo usermod -aG input $USER`
 
 Bazzite specific add your user to group: `ujust add-user-to-input-group`
