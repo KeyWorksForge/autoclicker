@@ -37,8 +37,9 @@ The binary path will be: `./target/release/theclicker`
 # Problems?
 
 ## Crashes
-
 Add your user to the input group, (may not work on all systems): `sudo usermod -aG input $USER`
+
+Bazzite specific add your user to group: `ujust add-user-to-input-group`
 
 Or try running as root: 
 
